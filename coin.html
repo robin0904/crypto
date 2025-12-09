@@ -31,38 +31,51 @@ body{
  height:600px;
  overflow:hidden;
  border-radius:16px;
- background:rgba(255,255,255,.06);
- border:1px solid rgba(255,255,255,.1);
+ background:rgba(255,255,255,.04);
+ border:1px solid rgba(255,255,255,.2);
  backdrop-filter:blur(10px);
  position:relative;
 }
 .newsInner{
  position:absolute;
  width:100%;
- animation:scrollNews 35s linear infinite;
+ animation:scrollNews 40s linear infinite;
 }
 .newsItem{
- padding:10px;
- border-bottom:1px solid rgba(255,255,255,.1);
+ padding:12px;
+ border-bottom:1px solid rgba(255,255,255,.08);
  cursor:pointer;
+ line-height:1.5;
 }
 .newsItem:hover{
- background:rgba(255,255,255,.15);
+ background:rgba(255,255,255,.12);
+}
+.newsBadge{
+ font-size:10px;
+ background:linear-gradient(45deg,#ff0055,#ff6600);
+ padding:2px 5px;
+ border-radius:4px;
+ margin-right:6px;
+}
+.newsDate{
+ font-size:10px;
+ opacity:.7;
 }
 
+/* infinite slower & smooth loop */
 @keyframes scrollNews{
  0%{top:0}
- 100%{top:-100%}
+ 100%{top:-200%}
 }
 
 /* center panel */
 .centerBox{
- width:800px;
+ width:820px;
  padding:20px;
- background:rgba(255,255,255,.05);
+ background:rgba(255,255,255,.06);
  backdrop-filter:blur(10px);
  border-radius:16px;
- border:1px solid rgba(255,255,255,.15);
+ border:1px solid rgba(255,255,255,.2);
 }
 
 /* chart */
@@ -115,7 +128,6 @@ async function load(){
  let params=new URLSearchParams(location.search)
  let id=params.get("id")
 
- // details
  let res1=await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&ids=${id}`)
  let c=(await res1.json())[0]
 
@@ -124,11 +136,11 @@ async function load(){
  document.getElementById("change").innerHTML=c.price_change_percentage_24h.toFixed(2)+"%"
  document.getElementById("logo").src=c.image
 
- // yesterday
+ // history
  let res2=await fetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=inr&days=2`)
  let hist=await res2.json()
- let yesterday=hist.prices[0][1]
 
+ let yesterday=hist.prices[0][1]
  document.getElementById("yesterday").innerHTML="Yesterday: ₹ "+Math.round(yesterday).toLocaleString()
 
  let last=hist.prices[hist.prices.length-1][1]
@@ -149,7 +161,17 @@ async function load(){
 }
 
 
-// 🎯 News to Left + Right both auto scrolling
+/* converting date nice format */
+function timeAgo(dateStr){
+ let date=new Date(dateStr)
+ let now=new Date()
+ let diff=(now-date)/1000/60/60/24
+ if(diff<1) return "Today"
+ if(diff<2) return "Yesterday"
+ return date.toLocaleDateString()
+}
+
+// NEWS
 async function loadNewsPanels(keyword){
  try{
    let res=await fetch(`https://cryptopanic.com/news/rss/?q=${keyword}`)
@@ -160,19 +182,24 @@ async function loadNewsPanels(keyword){
    let items=xml.getElementsByTagName("item")
 
    let leftHTML="", rightHTML=""
+
    for(let i=0;i<items.length;i++){
-     let titleNode=items[i].getElementsByTagName("title")[0]
-     if(!titleNode) continue
+     let item=items[i]
+     let title=item.getElementsByTagName("title")[0]?.textContent || ""
+     let link=item.getElementsByTagName("link")[0]?.textContent || ""
+     let date=item.getElementsByTagName("pubDate")[0]?.textContent || ""
 
-     let title=titleNode.textContent
-     let link=items[i].getElementsByTagName("link")[0]?.textContent || ""
+     let tag = i===0 ? "LATEST 🔥" : timeAgo(date)
 
-     // split half items left half right
-     if(i % 2 === 0){
-       leftHTML+=`<div class="newsItem" onclick="window.open('${link}','_blank')">${title}</div>`
-     }else{
-       rightHTML+=`<div class="newsItem" onclick="window.open('${link}','_blank')">${title}</div>`
-     }
+     let row=`
+       <div class="newsItem" onclick="window.open('${link}','_blank')">
+         <span class="newsBadge">${tag}</span> ${title}
+         <div class="newsDate">${date}</div>
+       </div>
+     `
+
+     if(i % 2 === 0) leftHTML += row
+     else rightHTML += row
    }
 
    document.getElementById("newsLeft").innerHTML=leftHTML
