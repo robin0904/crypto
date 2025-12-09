@@ -3,66 +3,134 @@
 <head>
 <title>Crypto Detail</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
 body{
- background:#000;
+ background:#05060a;
  color:#fff;
- font-family:Poppins, sans-serif;
- padding:20px;
+ font-family:Poppins;
+ margin:0;
+ padding:0;
 }
-.box{
- background:#111;
- padding:20px;
- border-radius:12px;
- max-width:800px;
+
+/* parallax bg */
+.bg{
+ position:fixed;
+ top:0;left:0;
+ width:100%;height:100%;
+ background:url(https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579) no-repeat center center/contain;
+ opacity:.04;
+ z-index:-2;
+ animation:moveBg 10s linear infinite alternate;
+}
+@keyframes moveBg{
+ from{transform:translateY(0);}
+ to{transform:translateY(70px);}
+}
+
+/* container */
+.wrapper{
+ max-width:1200px;
  margin:auto;
- border:1px solid #222;
- margin-bottom:25px;
+ padding:20px;
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:20px;
 }
-.price{font-size:32px;font-weight:600;}
-.green{color:#4aff4a}
-.red{color:#ff5757}
-.chart{margin-top:25px;}
+
+.box{
+ background:rgba(255,255,255,.05);
+ border-radius:16px;
+ padding:20px;
+ backdrop-filter:blur(10px);
+ border:1px solid rgba(255,255,255,.15);
+ animation:fadeIn .7s ease forwards;
+ opacity:0;
+}
+@keyframes fadeIn{
+ from{opacity:0;transform:translateY(30px);}
+ to{opacity:1;transform:translateY(0);}
+}
+
+.price{
+ font-size:42px;
+ font-weight:600;
+}
+
+/* news item */
 .newsItem{
- padding:10px;
- background:#151515;
- border-radius:10px;
- margin-bottom:12px;
- border:1px solid #1f1f1f;
+ background:rgba(255,255,255,.07);
+ padding:12px;
+ border-radius:14px;
+ margin-bottom:15px;
+ border:1px solid rgba(255,255,255,.1);
+ transition:.25s;
+}
+.newsItem:hover{
+ background:rgba(255,255,255,.12);
+ transform:translateX(6px);
 }
 .newsItem a{
- color:#4affff;
+ color:#6cf0ff;
  text-decoration:none;
- font-size:18px;
+ font-size:20px;
 }
-.newsItem small{
- color:#aaa;
+
+/* thumbnail */
+.thumb{
+ width:100%;
+ border-radius:12px;
+ margin-bottom:14px;
 }
+
+.green{color:#4aff4a;}
+.red{color:#ff5757;}
 </style>
 </head>
 
 <body>
 
+<div class="bg"></div>
+
+<div class="wrapper">
+
+<!-- LEFT PANEL -->
 <div class="box">
  <h1 id="name"></h1>
+ <img id="logo" style="width:70px;">
  <div class="price" id="price"></div>
  <div id="change"></div>
  <br>
  <div id="yesterday"></div>
  <div id="high"></div>
  <div id="low"></div>
+ <br>
  <div id="recommend"></div>
-</div>
+ <br><br>
 
-<div class="box">
  <h2>Live Chart</h2>
- <div class="chart" id="chart"></div>
+ <div id="chart"></div>
 </div>
 
+<!-- RIGHT PANEL -->
 <div class="box">
- <h2>Latest Crypto News</h2>
+ <h2>Media & Latest News</h2>
+
+ <!-- thumbnail -->
+ <img id="thumb" class="thumb" src="" />
+
+ <!-- auto video -->
+ <iframe id="video" width="100%" height="260" style="border-radius:12px;"
+ frameborder="0" allowfullscreen></iframe>
+
+ <br><br>
  <div id="news"></div>
 </div>
+
+</div>
+
 
 <script>
 async function load(){
@@ -79,8 +147,9 @@ async function load(){
  document.getElementById("name").innerHTML=c.name
  document.getElementById("price").innerHTML="₹ "+c.current_price.toLocaleString()
  document.getElementById("change").innerHTML=c.price_change_percentage_24h.toFixed(2)+"%"
+ document.getElementById("logo").src=c.image
 
- // history for yesterday
+ // history
  let res2=await fetch(
  `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=inr&days=2`
  )
@@ -90,9 +159,9 @@ async function load(){
 
  let last=hist.prices[hist.prices.length-1][1]
  if(last > yesterday){
-   document.getElementById("recommend").innerHTML="<span class='green'>Today is higher than yesterday — Bullish 🔥</span>"
+   document.getElementById("recommend").innerHTML="<span class='green'>Higher than yesterday — Bullish 🔥</span>"
  }else{
-   document.getElementById("recommend").innerHTML="<span class='red'>Today below yesterday — Be Careful ⚠️</span>"
+   document.getElementById("recommend").innerHTML="<span class='red'>Below yesterday — Bearish ⚠️</span>"
  }
 
  // high low
@@ -104,11 +173,19 @@ async function load(){
  `<iframe width="100%" height="400" frameborder="0"
   src="https://s.tradingview.com/widgetembed/?symbol=${c.symbol.toUpperCase()}USD&interval=60&theme=dark"></iframe>`
 
+ // thumbnail auto
+ document.getElementById("thumb").src=c.image
+
+ // auto video search Youtube
+ document.getElementById("video").src=
+   `https://www.youtube.com/embed?listType=search&list=${id}+crypto`
+
  // NEWS
  loadNews(id)
 }
 
-// NEWS (RSS Source)
+
+// NEWS
 async function loadNews(keyword){
  try{
    let res=await fetch(`https://cryptopanic.com/news/rss/?q=${keyword}`)
@@ -134,14 +211,15 @@ async function loadNews(keyword){
      <div class="newsItem">
        <a href="${link}" target="_blank">${title}</a><br>
        <small>${date}</small>
-     </div>
-     `
+     </div>`
    }
 
-   document.getElementById("news").innerHTML =
-     html || "<p style='color:#aaa;'>No recent news found for this coin.</p>"
+   document.getElementById("news").innerHTML=
+     html || "<p style='color:#aaa;'>No recent news found.</p>"
+
  }catch(e){
-   document.getElementById("news").innerHTML="<p style='color:#aaa;'>Something went wrong fetching news.</p>"
+   document.getElementById("news").innerHTML=
+     "<p style='color:#aaa;'>Unable to load news.</p>"
  }
 }
 
