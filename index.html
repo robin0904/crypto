@@ -1,160 +1,132 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Crypto Rates Live | cryptorate.in</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<title>cryptorate.in - Crypto Prices</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
+/* background */
 body{
- background:#000;
- color:#fff;
  margin:0;
+ background:#0d0f31;
  font-family:Poppins;
+ color:#fff;
+ overflow-x:hidden;
 }
 
+/* floating circles */
+.circle{
+ position:absolute;
+ border-radius:50%;
+ filter:blur(50px);
+ animation:move 12s infinite alternate;
+ opacity:.4;
+}
+.c1{ width:200px;height:200px; background:#2ab7ff; top:-20px; left:-40px;}
+.c2{ width:260px;height:260px; background:#8b2aff; bottom:0; right:-30px;}
+
+@keyframes move{
+ from{transform:translateY(0);}
+ to{transform:translateY(60px);}
+}
+
+/* header glass */
 .header{
- padding:20px;
+ backdrop-filter:blur(12px);
+ background:rgba(255,255,255,.05);
+ padding:18px;
  text-align:center;
- background: linear-gradient(90deg,#3500d3,#0e143c);
- box-shadow:0 0 20px #0f0;
- position:sticky;
- top:0;
- z-index:10;
-}
-.header h1{
- margin:0;
- font-size:28px;
- letter-spacing:1px;
-}
-
-.ticker{
- background:#111;
- padding:10px;
- overflow-x:auto;
- white-space:nowrap;
- border-top:1px solid #222;
-}
-.ticker span{
- margin-right:25px;
- color:#0ff;
-}
-
-.section-title{
  font-size:26px;
- margin:20px 10px;
- color:#4affff;
- border-left:4px solid #4affff;
- padding-left:8px;
+ position:sticky;
+ top:0;z-index:10;
+ border-bottom:1px solid rgba(255,255,255,.1);
 }
 
+/* cards grid */
 .grid{
  display:grid;
  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
- gap:15px;
- padding:10px;
+ gap:20px;
+ padding:20px;
 }
 
+/* card */
 .card{
- background:#090d19;
- border-radius:12px;
- padding:15px;
- border:1px solid #1b2141;
- box-shadow:0 0 12px #090d19;
+ padding:18px;
+ border-radius:18px;
+ background:rgba(255,255,255,.08);
+ backdrop-filter:blur(20px);
+ border:1px solid rgba(255,255,255,.1);
  transition:.3s;
+ position:relative;
 }
 .card:hover{
- transform:translateY(-6px);
- box-shadow:0 0 15px #292f54;
+ transform:translateY(-8px) scale(1.02);
 }
 .card img{
- width:32px;
- height:32px;
+ width:42px;height:42px;margin-bottom:10px;
 }
 
+/* prices */
 .price{
  font-size:24px;
- margin:8px 0;
+ margin:5px 0;
  font-weight:600;
 }
 
-.green{color:#4aff4a}
-.red{color:#ff5757}
+.green{color:#00ffab}
+.red{color:#ff6b6b}
 
+/* button */
 .btn{
- background:#4affff;
- padding:6px 12px;
- border-radius:6px;
- text-decoration:none;
- color:#000;
- font-weight:600;
  display:inline-block;
- margin-top:8px;
+ margin-top:10px;
+ background:#1a73e8;
+ padding:8px 16px;
+ border-radius:12px;
+ color:#fff;
+ text-decoration:none;
+ font-weight:600;
+ transition:.3s;
 }
+.btn:hover{background:#5597ff;}
 </style>
-</head>
 
+</head>
 <body>
 
+<div class="c1 circle"></div>
+<div class="c2 circle"></div>
+
 <div class="header">
- <h1>cryptorate.in — Live Crypto Prices</h1>
+ cryptorate.in Crypto Live (INR)
 </div>
 
-<div id="ticker" class="ticker"></div>
-
-<h2 class="section-title">Trending Coins</h2>
-<div id="coins" class="grid"></div>
-
-<h2 class="section-title">Biggest Gainers (Today)</h2>
-<div id="gainers" class="grid"></div>
-
-<h2 class="section-title">Biggest Losers (Today)</h2>
-<div id="losers" class="grid"></div>
+<div class="grid" id="coins"></div>
 
 <script>
 async function load(){
+ let url="https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&order=market_cap_desc&per_page=50&page=1&sparkline=false"
+ let res=await fetch(url)
+ let data=await res.json()
 
- let url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&order=market_cap_desc&per_page=50&page=1&sparkline=false"
- let res = await fetch(url)
- let data = await res.json()
-
- // ticker
- let tickerHTML=""
- data.slice(0,20).forEach(c=>{
-   tickerHTML+=`<span>${c.symbol.toUpperCase()}: ₹${c.current_price.toLocaleString()}</span>`
- })
- document.getElementById("ticker").innerHTML=tickerHTML
-
- // main list
  let html=""
- data.slice(0,20).forEach(c=>{
+ data.slice(0,30).forEach(c=>{
    let ch=c.price_change_percentage_24h>=0?"green":"red"
+
    html+=`
      <div class="card">
        <img src="${c.image}">
        <h3>${c.name}</h3>
        <div class="price">₹${c.current_price.toLocaleString()}</div>
        <div class="${ch}">${c.price_change_percentage_24h.toFixed(2)}%</div>
-       <a class="btn" href="#">More</a>
+       <a href="coin.html?id=${c.id}" class="btn">More</a>
      </div>`
  })
  document.getElementById("coins").innerHTML=html
-
- // gainers
- let g=[...data].sort((a,b)=>b.price_change_percentage_24h-a.price_change_percentage_24h).slice(0,6)
- document.getElementById("gainers").innerHTML=g.map(c=>`
- <div class="card">
-   <h3>${c.name}</h3>
-   <div class="green">${c.price_change_percentage_24h.toFixed(2)}%</div>
- </div>`).join("")
-
- // losers
- let l=[...data].sort((a,b)=>a.price_change_percentage_24h-b.price_change_percentage_24h).slice(0,6)
- document.getElementById("losers").innerHTML=l.map(c=>`
- <div class="card">
-   <h3>${c.name}</h3>
-   <div class="red">${c.price_change_percentage_24h.toFixed(2)}%</div>
- </div>`).join("")
 }
 
 load()
