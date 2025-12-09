@@ -96,7 +96,7 @@ body{
  width:180px;
  height:50px;
  filter:drop-shadow(0 0 12px #00ffe2);
- border:none!important; /* FIX BLUE LINE */
+ border:none!important;
  margin:8px 0 16px!important;
 }
 
@@ -197,8 +197,8 @@ body{
 
  <h1 id="name"></h1>
  <img id="logo" width="70"/>
- 
- <!-- MARKET ANIMATION (bull/bear/neutral) -->
+
+ <!-- ACTUAL ANIMAL ANIMATION BOX -->
  <div id="marketAnimation"></div>
 
  <!-- SPARKLINE -->
@@ -215,19 +215,20 @@ body{
    <div class="chip" id="fear"></div>
  </div>
 
- <!-- AI PREDICT TEXT -->
+ <!-- PREDICTION TEXT -->
  <div id="prediction"></div>
 
- <!-- 24h INFO GRID -->
+ <!-- INFO GRID -->
  <div class="infoGrid">
    <div class="infoCard" id="yesterday"></div>
    <div class="infoCard" id="high"></div>
    <div class="infoCard" id="low"></div>
  </div>
 
- <!-- TREND (bull/bear arrow) -->
+ <!-- MINI TREND LABEL -->
  <div id="recommend"></div>
- <!-- STATS GRID -->
+
+ <!-- STATS -->
  <div class="stats fade">
    <div class="statCard">
      <b>Market Rank</b><br><span id="rank"></span><br><br>
@@ -247,17 +248,17 @@ body{
    <div id="resistance"></div>
  </div>
 
- <!-- CHART CONTAINER -->
+ <!-- CHART -->
  <div class="chartBox fade">
    <div id="chart"></div>
  </div>
 
-</div> <!-- END main card -->
+</div><!-- END main card -->
 
 <!-- RIGHT NEWS -->
 <div class="newsCol" id="newsRight"></div>
 
-</div> <!-- END .page -->
+</div><!-- END .page -->
 <script>
 // fade observer
 const obs=new IntersectionObserver(e=>{
@@ -284,15 +285,15 @@ async function load(){
  let hist=await rr.json()
  let prices=hist.prices.map(p=>p[1])
 
- // YESTERDAY compare
+ // yesterday
  let y=prices[0], last=prices.at(-1)
  document.getElementById("yesterday").innerHTML="🕒 Yesterday<br>₹ "+Math.round(y).toLocaleString()
  document.getElementById("high").innerHTML="📈 24H High<br>₹ "+c.high_24h.toLocaleString()
  document.getElementById("low").innerHTML="📉 24H Low<br>₹ "+c.low_24h.toLocaleString()
 
+ // TREND TEXT
  document.getElementById("recommend").innerHTML =
-   last>y ? "<span class='green'>Bullish ↑</span>"
-          : "<span class='red'>Bearish ↓</span>"
+   last>y ? "<span class='green'>Bullish ↑</span>" : "<span class='red'>Bearish ↓</span>"
 
  // STATS
  document.getElementById("rank").innerHTML="#"+c.market_cap_rank
@@ -311,18 +312,19 @@ async function load(){
  ctx.strokeStyle="#00ffe2"
  prices.slice(-50).forEach((v,i)=>{
    let y=50-(v/Math.max(...prices.slice(-50))*50)
-   if(i==0) ctx.moveTo(i*4,y); else ctx.lineTo(i*4,y)
+   if(i==0) ctx.moveTo(i*4,y)
+   else ctx.lineTo(i*4,y)
  })
  ctx.stroke()
 
- // RSI dummy calc (quick)
+ // RSI (simple)
  let rsi=RSI(prices.slice(-100))
  document.getElementById("rsi").innerHTML="RSI: "+rsi.toFixed(1)
 
- // prediction text
+ // prediction
  document.getElementById("prediction").innerHTML =
-   c.price_change_percentage_24h>0? "Market looks bullish":
-   c.price_change_percentage_24h<0? "Market looks bearish":"Neutral"
+   c.price_change_percentage_24h>0 ? "Market looks bullish" :
+   c.price_change_percentage_24h<0 ? "Market looks bearish" : "Neutral"
 
  // FEAR index
  let fg=await fetch("https://api.alternative.me/fng/")
@@ -340,60 +342,63 @@ async function load(){
  `<iframe width="100%" height="450" frameborder="0"
  src="https://s.tradingview.com/widgetembed/?symbol=${c.symbol.toUpperCase()}USD&interval=60&theme=dark"></iframe>`
 
- // ANIMATION (bull/bear option B)
+ // PREMIUM ANIMALS here:
  loadAnimation(c.price_change_percentage_24h)
 
  // NEWS
  loadNews(id)
 }
 
-// SIMPLE RSI
+
+// RSI basic
 function RSI(arr){
  let g=0,l=0
  for(let i=1;i<15;i++){
    let d=arr[i]-arr[i-1]
-   if(d>0) g+=d; else l+=Math.abs(d)
+   if(d>0)g+=d;else l+=Math.abs(d)
  }
  let rs=g/(l||1)
  return 100-(100/(1+rs))
 }
-// BULL/BEAR/NEUTRAL LOTTIE
+// PREMIUM BULL / BEAR / ROBOT based on price %
 function loadAnimation(change){
  let animURL="";
 
- // B = based on 24h price change %
- if(change > 0.5){
-   animURL="https://assets10.lottiefiles.com/packages/lf20_HpFfTT.json"; // bull transparent
+ if(change > 0){
+   // 🟩 charging bull (premium)
+   animURL="https://lottie.host/bc672a49-02d2-465e-8463-601629a6753e/pzVB8cAu4T.json";
  }
- else if(change < -0.5){
-   animURL="https://assets9.lottiefiles.com/packages/lf20_t9gkkhz4.json"; // bear transparent
+ else if(change < 0){
+   // 🟥 angry bear (premium)
+   animURL="https://lottie.host/019a1afe-ccce-449d-ba34-25e0137cd0d2/DzAdS4WBeM.json";
  }
  else{
-   animURL="https://assets10.lottiefiles.com/packages/lf20_sbn5fsgn.json"; // neutral transparent
+   // 🟦 futuristic neutral robot
+   animURL="https://lottie.host/c050194b-e601-4ef1-bf95-dee819cc0786/Bag8wLjVTy.json";
  }
 
- // clear old
+ // Clear previous
  document.getElementById("marketAnimation").innerHTML="";
 
- // run
  lottie.loadAnimation({
    container: document.getElementById("marketAnimation"),
-   renderer: 'svg',
-   loop:true,
-   autoplay:true,
-   path:animURL
+   renderer: "svg",
+   loop: true,
+   autoplay: true,
+   path: animURL
  });
 }
 
 
 
-// NEWS
+// NEWS & infinite scroll
 async function loadNews(keyword){
  let r=await fetch(`https://cryptopanic.com/news/rss/?q=${keyword}`)
  let t=await r.text()
  let x=new DOMParser().parseFromString(t,"text/xml")
  let items=[...x.getElementsByTagName("item")]
 
+ // duplicate for loop effect
  let dup=[...items,...items]
 
  let L="",R=""
@@ -401,11 +406,14 @@ async function loadNews(keyword){
    let title=i.querySelector("title")?.textContent
    let date=i.querySelector("pubDate")?.textContent
    let link=i.querySelector("link")?.textContent
-   let cell=`<div class="newsItem" onclick="window.open('${link}')">
+
+   let cell=`
+   <div class="newsItem" onclick="window.open('${link}')">
      <span class='newsBadge'>NEWS</span>${title}
      <div class='newsDate'>${date}</div>
    </div>`
-   if(n%2==0)L+=cell;else R+=cell
+
+   if(n%2==0)L+=cell; else R+=cell
  })
 
  document.getElementById("newsLeft").innerHTML=L
@@ -417,11 +425,12 @@ async function loadNews(keyword){
 
 
 
-// AUTO SCROLL + HOVER PAUSE
+// auto scroll + pause
 function autoScrollColumn(col){
  let run=true
  col.addEventListener("mouseenter",()=>run=false)
  col.addEventListener("mouseleave",()=>run=true)
+
  setInterval(()=>{
    if(run) col.scrollBy({top:1,behavior:"smooth"})
  },60)
