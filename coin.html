@@ -1,27 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Coin Detail</title>
+<title>Crypto Detail</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 body{
  background:#000;
  color:#fff;
- font-family:Poppins;
+ font-family:Poppins, sans-serif;
  padding:20px;
 }
 .box{
  background:#111;
  padding:20px;
  border-radius:12px;
- max-width:600px;
+ max-width:800px;
  margin:auto;
  border:1px solid #222;
+ margin-bottom:25px;
 }
 .price{font-size:32px;font-weight:600;}
-.chart{margin-top:25px;}
 .green{color:#4aff4a}
 .red{color:#ff5757}
+.chart{margin-top:25px;}
+.newsItem{
+ padding:10px;
+ background:#151515;
+ border-radius:10px;
+ margin-bottom:12px;
+ border:1px solid #1f1f1f;
+}
+.newsItem a{
+ color:#4affff;
+ text-decoration:none;
+ font-size:18px;
+}
+.newsItem small{
+ color:#aaa;
+}
 </style>
 </head>
 
@@ -31,15 +47,21 @@ body{
  <h1 id="name"></h1>
  <div class="price" id="price"></div>
  <div id="change"></div>
-
  <br>
  <div id="yesterday"></div>
  <div id="high"></div>
  <div id="low"></div>
-
  <div id="recommend"></div>
+</div>
 
+<div class="box">
+ <h2>Live Chart</h2>
  <div class="chart" id="chart"></div>
+</div>
+
+<div class="box">
+ <h2>Latest Crypto News</h2>
+ <div id="news"></div>
 </div>
 
 <script>
@@ -47,41 +69,73 @@ async function load(){
  let params=new URLSearchParams(location.search)
  let id=params.get("id")
 
- // Basic
+ // detail
  let res1=await fetch(
-   `https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&ids=${id}`
+  `https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&ids=${id}`
  )
  let c=(await res1.json())[0]
 
+ // basic
  document.getElementById("name").innerHTML=c.name
  document.getElementById("price").innerHTML="₹ "+c.current_price.toLocaleString()
  document.getElementById("change").innerHTML=c.price_change_percentage_24h.toFixed(2)+"%"
 
- // history data to compare yesterday
- let res2=await fetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=inr&days=2`)
+ // history for yesterday
+ let res2=await fetch(
+ `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=inr&days=2`
+ )
  let hist=await res2.json()
-
  let yesterday=hist.prices[0][1]
  document.getElementById("yesterday").innerHTML="Yesterday: ₹ "+Math.round(yesterday).toLocaleString()
 
  let last=hist.prices[hist.prices.length-1][1]
  if(last > yesterday){
-   document.getElementById("recommend").innerHTML="<span class='green'>Today price is higher than yesterday — bullish signal 🔥</span>"
+   document.getElementById("recommend").innerHTML="<span class='green'>Today is higher than yesterday — Bullish 🔥</span>"
  }else{
-   document.getElementById("recommend").innerHTML="<span class='red'>Today Below yesterday — bearish ⚠️</span>"
+   document.getElementById("recommend").innerHTML="<span class='red'>Today below yesterday — Be Careful ⚠️</span>"
  }
 
- // high low today
+ // high low
  document.getElementById("high").innerHTML="24h High: ₹ "+c.high_24h.toLocaleString()
  document.getElementById("low").innerHTML="24h Low: ₹ "+c.low_24h.toLocaleString()
 
- // TradingView chart
+ // chart
  document.getElementById("chart").innerHTML=
  `<iframe width="100%" height="400" frameborder="0"
- src="https://s.tradingview.com/widgetembed/?symbol=${c.symbol.toUpperCase()}USD&interval=60&theme=dark">
- </iframe>`
+  src="https://s.tradingview.com/widgetembed/?symbol=${c.symbol.toUpperCase()}USD&interval=60&theme=dark"></iframe>`
+
+ // NEWS API (no key required)
+ loadNews(id)
 }
+
+// FREE CRYPTO NEWS API (cryptopanic RSS)
+async function loadNews(keyword){
+ let res=await fetch(`https://cryptopanic.com/news/rss/?q=${keyword}`)
+ let text=await res.text()
+
+ let parser=new DOMParser()
+ let xml=parser.parseFromString(text,"text/xml")
+ let items=xml.getElementsByTagName("item")
+
+ let html=""
+ for(let i=0;i<6;i++){
+   let title=items[i].getElementsByTagName("title")[0].textContent
+   let link=items[i].getElementsByTagName("link")[0].textContent
+   let date=items[i].getElementsByTagName("pubDate")[0].textContent
+
+   html+=`
+   <div class="newsItem">
+     <a href="${link}" target="_blank">${title}</a>
+     <br>
+     <small>${date}</small>
+   </div>
+   `
+ }
+ document.getElementById("news").innerHTML=html
+}
+
 load()
 </script>
+
 </body>
 </html>
