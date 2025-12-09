@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Crypto Detail</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+body{
+ background:#0d0f31;
+ color:#fff;
+ font-family:Poppins;
+ padding:20px;
+}
+.box{
+ background:rgba(255,255,255,.08);
+ backdrop-filter:blur(12px);
+ padding:20px;
+ border-radius:18px;
+ max-width:500px;
+ margin:auto;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+ <h2 id="name"></h2>
+ <div id="price"></div>
+ <div id="change"></div>
+ <div id="cap"></div>
+</div>
+
+<script>
+async function load(){
+ let params=new URLSearchParams(window.location.search)
+ let id=params.get("id")
+
+ let url=`https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&ids=${id}`
+ let res=await fetch(url)
+ let c=(await res.json())[0]
+
+ document.getElementById("name").innerHTML=c.name
+ document.getElementById("price").innerHTML="₹"+c.current_price.toLocaleString()
+ document.getElementById("change").innerHTML="24h: "+c.price_change_percentage_24h.toFixed(2)+"%"
+ document.getElementById("cap").innerHTML="Market Cap: ₹"+c.market_cap.toLocaleString()
+}
+load()
+</script>
+
+</body>
+</html>
