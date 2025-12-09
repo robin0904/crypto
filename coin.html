@@ -3,7 +3,6 @@
 <head>
 <title>Crypto Detail</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -15,7 +14,6 @@ body{
  padding:0;
  overflow-x:hidden;
 }
-
 .mainArea{
  display:flex;
  margin-top:20px;
@@ -24,8 +22,6 @@ body{
  gap:25px;
  padding-bottom:50px;
 }
-
-/* NEWS PANELS */
 .newsPanel{
  width:260px;
  height:650px;
@@ -51,15 +47,9 @@ body{
  border-radius:5px;
  margin-right:6px;
 }
-.newsDate{
- font-size:11px;
- opacity:.6;
- margin-top:4px;
-}
-
-/* CENTER */
+.newsDate{font-size:11px;opacity:.6;margin-top:4px;}
 .centerBox{
- width:800px;
+ width:820px;
  padding:24px;
  background:rgba(255,255,255,.07);
  border-radius:18px;
@@ -67,24 +57,26 @@ body{
  backdrop-filter:blur(12px);
 }
 
-/* Technical Mini Data Box */
+/* small sparkline */
+#spark{
+ width:200px;height:60px;
+ margin-top:10px;
+ filter: drop-shadow(0 0 5px #0af);
+}
+
+/* tech and stats */
 .tech{
  margin-top:28px;
  display:flex;
- justify-content:space-between;
- background:rgba(255,255,255,.03);
- padding:15px;
- border-radius:16px;
+ gap:20px;
 }
 .tech div{
- width:48%;
+ flex:1;
  background:rgba(255,255,255,.03);
  padding:12px;
  border-radius:12px;
  border:1px solid rgba(255,255,255,.09);
 }
-
-/* Buttons */
 .btnSmall{
  background:#0af;
  padding:6px 12px;
@@ -94,15 +86,19 @@ body{
  margin-right:8px;
  font-size:13px;
 }
-
-/* SUPPORT AREA */
-.supp{
- margin-top:16px;
- font-size:14px;
-}
-
+.supp{margin-top:16px;font-size:14px;}
 .green{color:#4aff4a;}
 .red{color:#ff5757;}
+
+/* fade animation */
+.fade{
+ opacity:0;transform:translateY(40px);
+ transition:1s;
+}
+.fade.show{
+ opacity:1;transform:translateY(0);
+}
+
 </style>
 </head>
 
@@ -111,16 +107,26 @@ body{
 <div class="mainArea">
 
 <!-- LEFT -->
-<div class="newsPanel" id="newsLeft"></div>
+<div class="newsPanel fade" id="newsLeft"></div>
 
 <!-- CENTER -->
-<div class="centerBox">
+<div class="centerBox fade">
 
  <h1 id="name"></h1>
- <img id="logo" width="60"/>
+ <img id="logo" width="60">
+ <canvas id="spark"></canvas>
 
  <h2 id="price"></h2>
  <div id="change"></div>
+
+ <!-- exchange price -->
+ <div id="waprice" style="margin:10px 0;font-size:14px;color:#0af"></div>
+
+ <!-- indicators -->
+ <div id="fear"></div>
+ <div id="rsi"></div>
+ <div id="prediction"></div>
+
  <br>
  <div id="yesterday"></div>
  <div id="high"></div>
@@ -130,20 +136,13 @@ body{
 
  <div class="tech">
      <div>
-         <b>Market Rank</b><br>
-         <span id="rank"></span>
-         <br><br>
-         <b>Circulating</b><br>
-         <span id="circ"></span>
-         <br><br><b>Total Supply</b><br>
-         <span id="total"></span>
+         <b>Market Rank</b><br><span id="rank"></span><br><br>
+         <b>Circulating</b><br><span id="circ"></span><br><br>
+         <b>Total Supply</b><br><span id="total"></span>
      </div>
      <div>
-         <b>ATH Price</b><br>
-         <span id="ath"></span>
-         <br><br>
-         <b>Market Cap</b><br>
-         <span id="mcap"></span>
+         <b>ATH Price</b><br><span id="ath"></span><br><br>
+         <b>Market Cap</b><br><span id="mcap"></span>
      </div>
  </div>
 
@@ -153,21 +152,29 @@ body{
  </div>
 
  <br><br>
-
  <a class="btnSmall" id="athbtn" target="_blank">All Time Chart</a>
 
- <h2>Live Chart</h2>
+ <h2 class="fade">Live Chart</h2>
  <div id="chart"></div>
 
 </div>
 
 <!-- RIGHT -->
-<div class="newsPanel" id="newsRight"></div>
+<div class="newsPanel fade" id="newsRight"></div>
 
 </div>
 
 
 <script>
+// Fade animation
+const observer=new IntersectionObserver(entries=>{
+ entries.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add("show")}
+ })
+})
+document.querySelectorAll(".fade").forEach(el=>observer.observe(el))
+
+
 async function load(){
  let p=new URLSearchParams(location.search)
  let id=p.get("id")
@@ -187,25 +194,58 @@ async function load(){
  document.getElementById("ath").innerHTML="₹"+c.ath?.toLocaleString()
  document.getElementById("athbtn").href=`https://www.tradingview.com/symbols/${c.symbol.toUpperCase()}USD/`
 
- // yesterday
- let rr=await fetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=inr&days=2`)
+ // prices
+ let rr=await fetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=inr&days=60`)
  let hist=await rr.json()
+ let prices=hist.prices.map(p=>p[1])
 
- let y=hist.prices[0][1]
+ // yesterday compare
+ let y=prices[0], last=prices.at(-1)
  document.getElementById("yesterday").innerHTML="Yesterday: ₹ "+Math.round(y).toLocaleString()
 
- let last=hist.prices.at(-1)[1]
  document.getElementById("recommend").innerHTML=
-   last>y?"<span class='green'>Higher than yesterday — Bullish</span>":
-   "<span class='red'>Below yesterday — Bearish</span>"
+   last>y?"<span class='green'>Higher — Bullish</span>":
+   "<span class='red'>Below — Bearish</span>"
 
  document.getElementById("high").innerHTML="24h High: ₹ "+c.high_24h.toLocaleString()
  document.getElementById("low").innerHTML="24h Low: ₹ "+c.low_24h.toLocaleString()
 
- // simple support resistance idea
+ // support / resistance mock
  document.getElementById("support").innerHTML="Support: ₹ "+Math.round(c.low_24h*.99)
  document.getElementById("resistance").innerHTML="Resistance: ₹ "+Math.round(c.high_24h*1.01)
 
+ // SPARKLINE
+ let ctx=document.getElementById("spark").getContext("2d")
+ ctx.beginPath()
+ ctx.strokeStyle="#0af"
+ prices.slice(-50).forEach((v,i)=>{
+   let y=60-(v/Math.max(...prices.slice(-50))*60)
+   if(i==0) ctx.moveTo(i*4,y)
+   else ctx.lineTo(i*4,y)
+ })
+ ctx.stroke()
+
+ // RSI calculation (14)
+ let rsi = calcRSI(prices.slice(-100))
+ document.getElementById("rsi").innerHTML="RSI(14): "+rsi.toFixed(2)
+
+ // AI prediction text (fun only)
+ document.getElementById("prediction").innerHTML= getPredict(rsi)
+
+ // Fear & Greed
+ let fg=await fetch("https://api.alternative.me/fng/")
+ let fgdata=await fg.json()
+ document.getElementById("fear").innerHTML=
+  "Fear & Greed: "+fgdata.data[0].value+" ("+fgdata.data[0].value_classification+")"
+
+ // Indian exchange BUY price (WazirX)
+ let wr=await fetch("https://api.wazirx.com/api/v2/tickers")
+ let wrx=await wr.json()
+ let t=c.symbol.toLowerCase()+"inr"
+ if(wrx[t]) document.getElementById("waprice").innerHTML=
+   "Buy @WazirX: ₹ "+Number(wrx[t].buy).toLocaleString()
+
+ // chart
  document.getElementById("chart").innerHTML=
  `<iframe width="100%" height="380" frameborder="0"
  src="https://s.tradingview.com/widgetembed/?symbol=${c.symbol.toUpperCase()}USD&interval=60&theme=dark"></iframe>`
@@ -213,6 +253,24 @@ async function load(){
  loadNewsPanels(id)
 }
 
+// RSI function
+function calcRSI(arr){
+ let gains=0,loss=0
+ for(let i=1;i<15;i++){
+   let diff=arr[i]-arr[i-1]
+   if(diff>0) gains+=diff
+   else loss+=Math.abs(diff)
+ }
+ let rs=gains/(loss||1)
+ return 100-(100/(1+rs))
+}
+
+// basic prediction text (NOT advice)
+function getPredict(rsi){
+ if(rsi>70) return "Overbought — wait ⚠"
+ if(rsi<30) return "Oversold — risky ⚠"
+ return "Neutral — watch price action"
+}
 
 // NEWS
 async function loadNewsPanels(keyword){
@@ -222,25 +280,20 @@ async function loadNewsPanels(keyword){
  let xml=parser.parseFromString(text,"text/xml")
  let items=[...xml.getElementsByTagName("item")]
 
- // repeat items = infinite long scroll
- let loop=[...items,...items,...items]
+ let loop=[...items,...items]
 
  let left="", right=""
  loop.forEach((it,i)=>{
    let title=it.querySelector("title")?.textContent||""
    let date=it.querySelector("pubDate")?.textContent||""
    let link=it.querySelector("link")?.textContent||""
-
    let cell=`
-   <div class="newsItem" onclick="window.open('${link}','_blank')">
-     <span class="newsBadge">News</span>${title}
-     <div class="newsDate">${date}</div>
-   </div>`
-
-   if(i%2==0) left+=cell
-   else right+=cell
+     <div class="newsItem" onclick="window.open('${link}','_blank')">
+       <span class="newsBadge">News</span>${title}
+       <div class="newsDate">${date}</div>
+     </div>`
+   if(i%2==0) left+=cell; else right+=cell
  })
-
  document.getElementById("newsLeft").innerHTML=left
  document.getElementById("newsRight").innerHTML=right
 }
