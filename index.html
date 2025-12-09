@@ -62,11 +62,21 @@ body{
  border:1px solid #1b2141;
  box-shadow:0 0 12px #090d19;
  transition:.3s;
+
+ opacity:0;
+ animation: fadeIn .6s ease forwards;
 }
 .card:hover{
- transform:translateY(-6px);
- box-shadow:0 0 15px #292f54;
+ transform:translateY(-6px) scale(1.02);
+ box-shadow:0 0 18px rgba(0,255,255,0.4);
+ filter: brightness(1.2);
 }
+
+@keyframes fadeIn{
+ from{transform:translateY(20px);opacity:0;}
+ to{transform:translateY(0);opacity:1;}
+}
+
 .card img{
  width:32px;
  height:32px;
@@ -135,7 +145,7 @@ async function load(){
        <h3>${c.name}</h3>
        <div class="price">₹${c.current_price.toLocaleString()}</div>
        <div class="${ch}">${c.price_change_percentage_24h.toFixed(2)}%</div>
-       <a class="btn" href="#">More</a>
+       <a class="btn" href="coin.html?id=${c.id}">More</a>
      </div>`
  })
  document.getElementById("coins").innerHTML=html
