@@ -1,45 +1,124 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Crypto Detail</title>
+<title>Crypto NEON Detail</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
 body{
- background:#05060a;
+ background:#02030d;
  color:#fff;
- font-family:Poppins;
- margin:0;
- padding:0;
+ font-family:Poppins,sans-serif;
+ margin:0;padding:0;
  overflow-x:hidden;
 }
-.mainArea{
+
+/* GRID */
+.page{
  display:flex;
- margin-top:20px;
  justify-content:center;
- align-items:flex-start;
  gap:25px;
- padding-bottom:50px;
+ padding:30px 10px 120px;
 }
-.newsPanel{
+
+/* MAIN NEON BOX */
+.card{
+ width:850px;
+ background:rgba(0,0,15,.7);
+ border-radius:20px;
+ border:2px solid rgba(0,255,255,.15);
+ box-shadow:0 0 35px rgba(0,255,255,.15);
+ padding:25px;
+ backdrop-filter:blur(12px);
+ animation:fadeIn .8s ease forwards;
+}
+
+/* SIDEBARS */
+.newsCol{
  width:260px;
+ background:rgba(255,255,255,.05);
+ border-radius:18px;
+ border:1px solid rgba(0,255,255,.2);
+ backdrop-filter:blur(10px);
  height:650px;
  overflow:auto;
- border-radius:16px;
- background:rgba(255,255,255,.05);
- border:1px solid rgba(255,255,255,.2);
- backdrop-filter:blur(8px);
- scroll-behavior:smooth;
+ padding-bottom:50px;
+ animation:fadeIn .8s ease forwards;
 }
+
 .newsItem{
  padding:12px;
  border-bottom:1px solid rgba(255,255,255,.07);
  cursor:pointer;
+ font-size:14px;
 }
 .newsItem:hover{
- background:rgba(255,255,255,.18);
+ background:rgba(0,255,255,.12);
 }
+
+/* TITLES */
+h1,h2{
+ margin:0 0 10px 0;
+ font-weight:600;
+ letter-spacing:1px;
+ color:#0ff;
+ text-shadow:0 0 15px #0ff;
+}
+
+/* INDICATOR ROW */
+.indicators{
+ display:flex;
+ gap:12px;
+ margin:20px 0;
+}
+.indBox{
+ flex:1;
+ background:rgba(255,255,255,.03);
+ border-radius:14px;
+ border:1px solid rgba(0,255,255,.3);
+ padding:10px;
+ text-align:center;
+ color:#74faff;
+ font-size:14px;
+ text-shadow:0 0 6px rgba(0,255,255,.7);
+}
+.indBox:hover{
+ box-shadow:0 0 18px #00ffee;
+ border-color:#00ffee;
+}
+
+/* MINI TECH */
+.tech{
+ background:rgba(255,255,255,.04);
+ border-radius:12px;
+ border:1px solid rgba(255,255,255,.15);
+ padding:18px;
+ display:flex;
+ justify-content:space-between;
+ margin-top:25px;
+}
+.tech div{width:48%;}
+
+/* SPARK */
+#spark{
+ width:180px;
+ height:60px;
+ filter:drop-shadow(0 0 12px #00ffe2);
+ border-radius:6px;
+}
+
+/* CHART */
+.chartBox{
+ border-radius:16px;
+ border:2px solid rgba(0,255,255,.25);
+ box-shadow:0 0 25px rgba(0,255,255,.25);
+ overflow:hidden;
+ margin-top:30px;
+}
+
+/* NEWS */
 .newsBadge{
  font-size:10px;
  background:linear-gradient(45deg,#fe0066,#ff8800);
@@ -47,84 +126,48 @@ body{
  border-radius:5px;
  margin-right:6px;
 }
-.newsDate{font-size:11px;opacity:.6;margin-top:4px;}
-.centerBox{
- width:820px;
- padding:24px;
- background:rgba(255,255,255,.07);
- border-radius:18px;
- border:1px solid rgba(255,255,255,.25);
- backdrop-filter:blur(12px);
+.newsDate{
+ font-size:10px;opacity:.6;margin-top:4px;
 }
 
-/* small sparkline */
-#spark{
- width:200px;height:60px;
- margin-top:10px;
- filter: drop-shadow(0 0 5px #0af);
-}
+/* FADE */
+.fade{opacity:0;transform:translateY(40px);}
+.fade.show{opacity:1;transform:translateY(0);transition:1s;}
 
-/* tech and stats */
-.tech{
- margin-top:28px;
- display:flex;
- gap:20px;
-}
-.tech div{
- flex:1;
- background:rgba(255,255,255,.03);
- padding:12px;
- border-radius:12px;
- border:1px solid rgba(255,255,255,.09);
-}
-.btnSmall{
- background:#0af;
- padding:6px 12px;
- border-radius:8px;
- text-decoration:none;
- color:#000;
- margin-right:8px;
- font-size:13px;
-}
-.supp{margin-top:16px;font-size:14px;}
-.green{color:#4aff4a;}
-.red{color:#ff5757;}
+.green{color:#00ff9d;}
+.red{color:#ff3366;}
 
-/* fade animation */
-.fade{
- opacity:0;transform:translateY(40px);
- transition:1s;
+@keyframes fadeIn{
+ from{opacity:0;transform:translateY(40px);}
+ to{opacity:1;transform:translateY(0);}
 }
-.fade.show{
- opacity:1;transform:translateY(0);
-}
-
 </style>
 </head>
 
 <body>
 
-<div class="mainArea">
+<div class="page">
 
-<!-- LEFT -->
-<div class="newsPanel fade" id="newsLeft"></div>
+<div class="newsCol fade" id="newsLeft"></div>
 
-<!-- CENTER -->
-<div class="centerBox fade">
+<div class="card fade">
 
  <h1 id="name"></h1>
- <img id="logo" width="60">
+ <img id="logo" width="70"/>
+
+ <!-- spark -->
  <canvas id="spark"></canvas>
 
  <h2 id="price"></h2>
  <div id="change"></div>
 
- <!-- exchange price -->
- <div id="waprice" style="margin:10px 0;font-size:14px;color:#0af"></div>
+ <!-- new indicator row -->
+ <div class="indicators">
+   <div class="indBox" id="waprice"></div>
+   <div class="indBox" id="rsi"></div>
+   <div class="indBox" id="fear"></div>
+ </div>
 
- <!-- indicators -->
- <div id="fear"></div>
- <div id="rsi"></div>
  <div id="prediction"></div>
 
  <br>
@@ -134,7 +177,7 @@ body{
  <br>
  <div id="recommend"></div>
 
- <div class="tech">
+ <div class="tech fade">
      <div>
          <b>Market Rank</b><br><span id="rank"></span><br><br>
          <b>Circulating</b><br><span id="circ"></span><br><br>
@@ -146,33 +189,27 @@ body{
      </div>
  </div>
 
- <div class="supp">
-     <div id="support"></div>
-     <div id="resistance"></div>
+ <br>
+ <b id="support"></b><br>
+ <b id="resistance"></b>
+
+ <div class="chartBox fade">
+   <div id="chart"></div>
  </div>
-
- <br><br>
- <a class="btnSmall" id="athbtn" target="_blank">All Time Chart</a>
-
- <h2 class="fade">Live Chart</h2>
- <div id="chart"></div>
 
 </div>
 
-<!-- RIGHT -->
-<div class="newsPanel fade" id="newsRight"></div>
+<div class="newsCol fade" id="newsRight"></div>
 
 </div>
 
 
 <script>
-// Fade animation
-const observer=new IntersectionObserver(entries=>{
- entries.forEach(e=>{
-  if(e.isIntersecting){e.target.classList.add("show")}
- })
+// fade scroll
+const obs=new IntersectionObserver(e=>{
+ e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("show")})
 })
-document.querySelectorAll(".fade").forEach(el=>observer.observe(el))
+document.querySelectorAll(".fade").forEach(el=>obs.observe(el))
 
 
 async function load(){
@@ -192,32 +229,29 @@ async function load(){
  document.getElementById("total").innerHTML=c.total_supply?.toLocaleString()
  document.getElementById("mcap").innerHTML="₹"+c.market_cap?.toLocaleString()
  document.getElementById("ath").innerHTML="₹"+c.ath?.toLocaleString()
- document.getElementById("athbtn").href=`https://www.tradingview.com/symbols/${c.symbol.toUpperCase()}USD/`
 
- // prices
+ // history
  let rr=await fetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=inr&days=60`)
  let hist=await rr.json()
  let prices=hist.prices.map(p=>p[1])
 
- // yesterday compare
- let y=prices[0], last=prices.at(-1)
- document.getElementById("yesterday").innerHTML="Yesterday: ₹ "+Math.round(y).toLocaleString()
+ let y=prices[0]
+ let last=prices.at(-1)
 
+ document.getElementById("yesterday").innerHTML="Yesterday: ₹ "+Math.round(y).toLocaleString()
  document.getElementById("recommend").innerHTML=
-   last>y?"<span class='green'>Higher — Bullish</span>":
-   "<span class='red'>Below — Bearish</span>"
+   last>y?"<span class='green'>Bullish ↗</span>":"<span class='red'>Bearish ↘</span>"
 
  document.getElementById("high").innerHTML="24h High: ₹ "+c.high_24h.toLocaleString()
  document.getElementById("low").innerHTML="24h Low: ₹ "+c.low_24h.toLocaleString()
 
- // support / resistance mock
  document.getElementById("support").innerHTML="Support: ₹ "+Math.round(c.low_24h*.99)
  document.getElementById("resistance").innerHTML="Resistance: ₹ "+Math.round(c.high_24h*1.01)
 
- // SPARKLINE
+ // sparkline
  let ctx=document.getElementById("spark").getContext("2d")
  ctx.beginPath()
- ctx.strokeStyle="#0af"
+ ctx.strokeStyle="#00ffe2"
  prices.slice(-50).forEach((v,i)=>{
    let y=60-(v/Math.max(...prices.slice(-50))*60)
    if(i==0) ctx.moveTo(i*4,y)
@@ -225,51 +259,44 @@ async function load(){
  })
  ctx.stroke()
 
- // RSI calculation (14)
- let rsi = calcRSI(prices.slice(-100))
- document.getElementById("rsi").innerHTML="RSI(14): "+rsi.toFixed(2)
+ // RSI
+ let rsi=calcRSI(prices.slice(-100))
+ document.getElementById("rsi").innerHTML="RSI: "+rsi.toFixed(1)
 
- // AI prediction text (fun only)
- document.getElementById("prediction").innerHTML= getPredict(rsi)
+ // AI note
+ document.getElementById("prediction").innerHTML =
+   rsi>70?"⚠ Overbought":"🟡 Neutral"
 
- // Fear & Greed
+ // FearGreed
  let fg=await fetch("https://api.alternative.me/fng/")
  let fgdata=await fg.json()
  document.getElementById("fear").innerHTML=
-  "Fear & Greed: "+fgdata.data[0].value+" ("+fgdata.data[0].value_classification+")"
+  "Fear: "+fgdata.data[0].value
 
- // Indian exchange BUY price (WazirX)
- let wr=await fetch("https://api.wazirx.com/api/v2/tickers")
- let wrx=await wr.json()
+ // WazirX
+ let wx=await fetch("https://api.wazirx.com/api/v2/tickers")
+ let data=await wx.json()
  let t=c.symbol.toLowerCase()+"inr"
- if(wrx[t]) document.getElementById("waprice").innerHTML=
-   "Buy @WazirX: ₹ "+Number(wrx[t].buy).toLocaleString()
+ if(data[t]) document.getElementById("waprice").innerHTML=
+   "WazirX: ₹"+data[t].buy
+
+ loadNewsPanels(id)
 
  // chart
  document.getElementById("chart").innerHTML=
- `<iframe width="100%" height="380" frameborder="0"
+ `<iframe width="100%" height="450" frameborder="0"
  src="https://s.tradingview.com/widgetembed/?symbol=${c.symbol.toUpperCase()}USD&interval=60&theme=dark"></iframe>`
-
- loadNewsPanels(id)
 }
 
 // RSI function
 function calcRSI(arr){
- let gains=0,loss=0
+ let g=0,l=0
  for(let i=1;i<15;i++){
-   let diff=arr[i]-arr[i-1]
-   if(diff>0) gains+=diff
-   else loss+=Math.abs(diff)
+   let d=arr[i]-arr[i-1]
+   if(d>0) g+=d; else l+=Math.abs(d)
  }
- let rs=gains/(loss||1)
+ let rs=g/(l||1)
  return 100-(100/(1+rs))
-}
-
-// basic prediction text (NOT advice)
-function getPredict(rsi){
- if(rsi>70) return "Overbought — wait ⚠"
- if(rsi<30) return "Oversold — risky ⚠"
- return "Neutral — watch price action"
 }
 
 // NEWS
@@ -282,20 +309,18 @@ async function loadNewsPanels(keyword){
 
  let loop=[...items,...items]
 
- let left="", right=""
+ let L="",R=""
  loop.forEach((it,i)=>{
-   let title=it.querySelector("title")?.textContent||""
-   let date=it.querySelector("pubDate")?.textContent||""
-   let link=it.querySelector("link")?.textContent||""
-   let cell=`
-     <div class="newsItem" onclick="window.open('${link}','_blank')">
-       <span class="newsBadge">News</span>${title}
-       <div class="newsDate">${date}</div>
-     </div>`
-   if(i%2==0) left+=cell; else right+=cell
+   let t=it.querySelector("title")?.textContent||""
+   let d=it.querySelector("pubDate")?.textContent||""
+   let l=it.querySelector("link")?.textContent||""
+   let cell=`<div class="newsItem" onclick="window.open('${l}','_blank')">
+   <span class="newsBadge">NEWS</span>${t}<div class="newsDate">${d}</div>
+   </div>`
+   if(i%2==0)L+=cell;else R+=cell
  })
- document.getElementById("newsLeft").innerHTML=left
- document.getElementById("newsRight").innerHTML=right
+ document.getElementById("newsLeft").innerHTML=L
+ document.getElementById("newsRight").innerHTML=R
 }
 
 load()
