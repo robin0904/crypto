@@ -13,76 +13,61 @@ body{
  font-family:Poppins;
  margin:0;
  padding:0;
+ overflow-x:hidden;
 }
 
-/* parallax bg */
-.bg{
- position:fixed;
- top:0;left:0;
- width:100%;height:100%;
- background:url(https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579) no-repeat center center/contain;
- opacity:.04;
- z-index:-2;
- animation:moveBg 10s linear infinite alternate;
-}
-@keyframes moveBg{
- from{transform:translateY(0);}
- to{transform:translateY(70px);}
+/* wrapper */
+.mainArea{
+ display:flex;
+ margin-top:20px;
+ justify-content:center;
+ align-items:flex-start;
+ gap:25px;
 }
 
-/* container */
-.wrapper{
- max-width:1200px;
- margin:auto;
- padding:20px;
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:20px;
-}
-
-.box{
- background:rgba(255,255,255,.05);
+/* left & right news panels */
+.newsPanel{
+ width:260px;
+ height:600px;
+ overflow:hidden;
  border-radius:16px;
- padding:20px;
- backdrop-filter:blur(10px);
- border:1px solid rgba(255,255,255,.15);
- animation:fadeIn .7s ease forwards;
- opacity:0;
-}
-@keyframes fadeIn{
- from{opacity:0;transform:translateY(30px);}
- to{opacity:1;transform:translateY(0);}
-}
-
-.price{
- font-size:42px;
- font-weight:600;
-}
-
-/* news item */
-.newsItem{
- background:rgba(255,255,255,.07);
- padding:12px;
- border-radius:14px;
- margin-bottom:15px;
+ background:rgba(255,255,255,.06);
  border:1px solid rgba(255,255,255,.1);
- transition:.25s;
+ backdrop-filter:blur(10px);
+ position:relative;
+}
+.newsInner{
+ position:absolute;
+ width:100%;
+ animation:scrollNews 35s linear infinite;
+}
+.newsItem{
+ padding:10px;
+ border-bottom:1px solid rgba(255,255,255,.1);
+ cursor:pointer;
 }
 .newsItem:hover{
- background:rgba(255,255,255,.12);
- transform:translateX(6px);
-}
-.newsItem a{
- color:#6cf0ff;
- text-decoration:none;
- font-size:20px;
+ background:rgba(255,255,255,.15);
 }
 
-/* thumbnail */
-.thumb{
- width:100%;
- border-radius:12px;
- margin-bottom:14px;
+@keyframes scrollNews{
+ 0%{top:0}
+ 100%{top:-100%}
+}
+
+/* center panel */
+.centerBox{
+ width:800px;
+ padding:20px;
+ background:rgba(255,255,255,.05);
+ backdrop-filter:blur(10px);
+ border-radius:16px;
+ border:1px solid rgba(255,255,255,.15);
+}
+
+/* chart */
+.chartArea{
+ margin-top:15px;
 }
 
 .green{color:#4aff4a;}
@@ -92,42 +77,35 @@ body{
 
 <body>
 
-<div class="bg"></div>
+<div class="mainArea">
 
-<div class="wrapper">
+ <!-- LEFT NEWS -->
+ <div class="newsPanel">
+   <div class="newsInner" id="newsLeft"></div>
+ </div>
 
-<!-- LEFT PANEL -->
-<div class="box">
- <h1 id="name"></h1>
- <img id="logo" style="width:70px;">
- <div class="price" id="price"></div>
- <div id="change"></div>
- <br>
- <div id="yesterday"></div>
- <div id="high"></div>
- <div id="low"></div>
- <br>
- <div id="recommend"></div>
- <br><br>
+ <!-- CENTER -->
+ <div class="centerBox">
+   <h1 id="name"></h1>
+   <img id="logo" width="60"/>
 
- <h2>Live Chart</h2>
- <div id="chart"></div>
-</div>
+   <h2 id="price"></h2>
+   <div id="change"></div>
+   <br>
+   <div id="yesterday"></div>
+   <div id="high"></div>
+   <div id="low"></div>
+   <br>
+   <div id="recommend"></div>
 
-<!-- RIGHT PANEL -->
-<div class="box">
- <h2>Media & Latest News</h2>
+   <h2>Live Chart</h2>
+   <div class="chartArea" id="chart"></div>
+ </div>
 
- <!-- thumbnail -->
- <img id="thumb" class="thumb" src="" />
-
- <!-- auto video -->
- <iframe id="video" width="100%" height="260" style="border-radius:12px;"
- frameborder="0" allowfullscreen></iframe>
-
- <br><br>
- <div id="news"></div>
-</div>
+ <!-- RIGHT NEWS -->
+ <div class="newsPanel">
+   <div class="newsInner" id="newsRight"></div>
+ </div>
 
 </div>
 
@@ -137,56 +115,42 @@ async function load(){
  let params=new URLSearchParams(location.search)
  let id=params.get("id")
 
- // detail
- let res1=await fetch(
-  `https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&ids=${id}`
- )
+ // details
+ let res1=await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&ids=${id}`)
  let c=(await res1.json())[0]
 
- // basic
  document.getElementById("name").innerHTML=c.name
  document.getElementById("price").innerHTML="₹ "+c.current_price.toLocaleString()
  document.getElementById("change").innerHTML=c.price_change_percentage_24h.toFixed(2)+"%"
  document.getElementById("logo").src=c.image
 
- // history
- let res2=await fetch(
- `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=inr&days=2`
- )
+ // yesterday
+ let res2=await fetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=inr&days=2`)
  let hist=await res2.json()
  let yesterday=hist.prices[0][1]
+
  document.getElementById("yesterday").innerHTML="Yesterday: ₹ "+Math.round(yesterday).toLocaleString()
 
  let last=hist.prices[hist.prices.length-1][1]
  if(last > yesterday){
-   document.getElementById("recommend").innerHTML="<span class='green'>Higher than yesterday — Bullish 🔥</span>"
+   document.getElementById("recommend").innerHTML="<span class='green'>Higher than yesterday — Bullish</span>"
  }else{
-   document.getElementById("recommend").innerHTML="<span class='red'>Below yesterday — Bearish ⚠️</span>"
+   document.getElementById("recommend").innerHTML="<span class='red'>Below yesterday — Bearish</span>"
  }
 
- // high low
  document.getElementById("high").innerHTML="24h High: ₹ "+c.high_24h.toLocaleString()
  document.getElementById("low").innerHTML="24h Low: ₹ "+c.low_24h.toLocaleString()
 
- // chart
  document.getElementById("chart").innerHTML=
- `<iframe width="100%" height="400" frameborder="0"
+ `<iframe width="100%" height="420" frameborder="0"
   src="https://s.tradingview.com/widgetembed/?symbol=${c.symbol.toUpperCase()}USD&interval=60&theme=dark"></iframe>`
 
- // thumbnail auto
- document.getElementById("thumb").src=c.image
-
- // auto video search Youtube
- document.getElementById("video").src=
-   `https://www.youtube.com/embed?listType=search&list=${id}+crypto`
-
- // NEWS
- loadNews(id)
+ loadNewsPanels(id)
 }
 
 
-// NEWS
-async function loadNews(keyword){
+// 🎯 News to Left + Right both auto scrolling
+async function loadNewsPanels(keyword){
  try{
    let res=await fetch(`https://cryptopanic.com/news/rss/?q=${keyword}`)
    let text=await res.text()
@@ -195,32 +159,26 @@ async function loadNews(keyword){
    let xml=parser.parseFromString(text,"text/xml")
    let items=xml.getElementsByTagName("item")
 
-   let html=""
-   for(let i=0;i<6 && i<items.length;i++){
+   let leftHTML="", rightHTML=""
+   for(let i=0;i<items.length;i++){
      let titleNode=items[i].getElementsByTagName("title")[0]
      if(!titleNode) continue
 
      let title=titleNode.textContent
-     let linkNode=items[i].getElementsByTagName("link")[0]
-     let dateNode=items[i].getElementsByTagName("pubDate")[0]
+     let link=items[i].getElementsByTagName("link")[0]?.textContent || ""
 
-     let link=linkNode?linkNode.textContent:""
-     let date=dateNode?dateNode.textContent:""
-
-     html+=`
-     <div class="newsItem">
-       <a href="${link}" target="_blank">${title}</a><br>
-       <small>${date}</small>
-     </div>`
+     // split half items left half right
+     if(i % 2 === 0){
+       leftHTML+=`<div class="newsItem" onclick="window.open('${link}','_blank')">${title}</div>`
+     }else{
+       rightHTML+=`<div class="newsItem" onclick="window.open('${link}','_blank')">${title}</div>`
+     }
    }
 
-   document.getElementById("news").innerHTML=
-     html || "<p style='color:#aaa;'>No recent news found.</p>"
+   document.getElementById("newsLeft").innerHTML=leftHTML
+   document.getElementById("newsRight").innerHTML=rightHTML
 
- }catch(e){
-   document.getElementById("news").innerHTML=
-     "<p style='color:#aaa;'>Unable to load news.</p>"
- }
+ }catch(e){}
 }
 
 load()
