@@ -104,34 +104,45 @@ async function load(){
  `<iframe width="100%" height="400" frameborder="0"
   src="https://s.tradingview.com/widgetembed/?symbol=${c.symbol.toUpperCase()}USD&interval=60&theme=dark"></iframe>`
 
- // NEWS API (no key required)
+ // NEWS
  loadNews(id)
 }
 
-// FREE CRYPTO NEWS API (cryptopanic RSS)
+// NEWS (RSS Source)
 async function loadNews(keyword){
- let res=await fetch(`https://cryptopanic.com/news/rss/?q=${keyword}`)
- let text=await res.text()
+ try{
+   let res=await fetch(`https://cryptopanic.com/news/rss/?q=${keyword}`)
+   let text=await res.text()
 
- let parser=new DOMParser()
- let xml=parser.parseFromString(text,"text/xml")
- let items=xml.getElementsByTagName("item")
+   let parser=new DOMParser()
+   let xml=parser.parseFromString(text,"text/xml")
+   let items=xml.getElementsByTagName("item")
 
- let html=""
- for(let i=0;i<6;i++){
-   let title=items[i].getElementsByTagName("title")[0].textContent
-   let link=items[i].getElementsByTagName("link")[0].textContent
-   let date=items[i].getElementsByTagName("pubDate")[0].textContent
+   let html=""
+   for(let i=0;i<6 && i<items.length;i++){
+     let titleNode=items[i].getElementsByTagName("title")[0]
+     if(!titleNode) continue
 
-   html+=`
-   <div class="newsItem">
-     <a href="${link}" target="_blank">${title}</a>
-     <br>
-     <small>${date}</small>
-   </div>
-   `
+     let title=titleNode.textContent
+     let linkNode=items[i].getElementsByTagName("link")[0]
+     let dateNode=items[i].getElementsByTagName("pubDate")[0]
+
+     let link=linkNode?linkNode.textContent:""
+     let date=dateNode?dateNode.textContent:""
+
+     html+=`
+     <div class="newsItem">
+       <a href="${link}" target="_blank">${title}</a><br>
+       <small>${date}</small>
+     </div>
+     `
+   }
+
+   document.getElementById("news").innerHTML =
+     html || "<p style='color:#aaa;'>No recent news found for this coin.</p>"
+ }catch(e){
+   document.getElementById("news").innerHTML="<p style='color:#aaa;'>Something went wrong fetching news.</p>"
  }
- document.getElementById("news").innerHTML=html
 }
 
 load()
