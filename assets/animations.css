@@ -1,0 +1,466 @@
+/* 3D Animated Characters and Elements */
+
+/* Bull Character Animation */
+.bull-character {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 120px;
+  height: 120px;
+  z-index: 1000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.bull-character:hover {
+  transform: scale(1.1);
+}
+
+.bull-body {
+  width: 80px;
+  height: 60px;
+  background: linear-gradient(45deg, #00ff88, #00cc66);
+  border-radius: 50% 50% 40% 40%;
+  position: relative;
+  animation: bullBreathe 2s ease-in-out infinite;
+}
+
+.bull-head {
+  width: 50px;
+  height: 40px;
+  background: linear-gradient(45deg, #00ff88, #00cc66);
+  border-radius: 50%;
+  position: absolute;
+  top: -20px;
+  left: 15px;
+  animation: bullNod 3s ease-in-out infinite;
+}
+
+.bull-horns {
+  position: absolute;
+  top: -10px;
+}
+
+.bull-horn {
+  width: 8px;
+  height: 15px;
+  background: #ffaa00;
+  border-radius: 50% 50% 0 0;
+  position: absolute;
+  animation: hornGlow 2s ease-in-out infinite alternate;
+}
+
+.bull-horn.left {
+  left: 8px;
+  transform: rotate(-20deg);
+}
+
+.bull-horn.right {
+  right: 8px;
+  transform: rotate(20deg);
+}
+
+.bull-eyes {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.bull-eye {
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  animation: eyeBlink 4s ease-in-out infinite;
+}
+
+.bull-eye.left {
+  left: -8px;
+}
+
+.bull-eye.right {
+  right: -8px;
+}
+
+.bull-eye::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: #000;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+}
+
+/* Bear Character Animation */
+.bear-character {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 120px;
+  height: 120px;
+  z-index: 1000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: none; /* Show when market is bearish */
+}
+
+.bear-body {
+  width: 80px;
+  height: 60px;
+  background: linear-gradient(45deg, #ff0066, #cc0044);
+  border-radius: 50% 50% 40% 40%;
+  position: relative;
+  animation: bearSway 2.5s ease-in-out infinite;
+}
+
+.bear-head {
+  width: 50px;
+  height: 40px;
+  background: linear-gradient(45deg, #ff0066, #cc0044);
+  border-radius: 50%;
+  position: absolute;
+  top: -20px;
+  left: 15px;
+  animation: bearShake 3s ease-in-out infinite;
+}
+
+.bear-ears {
+  position: absolute;
+  top: -5px;
+}
+
+.bear-ear {
+  width: 12px;
+  height: 12px;
+  background: #ff0066;
+  border-radius: 50%;
+  position: absolute;
+  animation: earTwitch 2s ease-in-out infinite;
+}
+
+.bear-ear.left {
+  left: 5px;
+}
+
+.bear-ear.right {
+  right: 5px;
+}
+
+/* Floating Coins Animation */
+.floating-coins {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.floating-coin {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(45deg, #ffd700, #ffed4e);
+  border-radius: 50%;
+  border: 3px solid #ffaa00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #000;
+  animation: floatCoin 8s linear infinite;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.floating-coin::before {
+  content: '₿';
+  font-size: 20px;
+}
+
+/* 3D Price Movement Indicators */
+.price-rocket {
+  position: absolute;
+  width: 60px;
+  height: 80px;
+  background: linear-gradient(45deg, #00ff88, #0099ff);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  animation: rocketLaunch 2s ease-out;
+  z-index: 100;
+}
+
+.price-rocket::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 40px;
+  background: linear-gradient(45deg, #ff6600, #ff0066);
+  border-radius: 50% 50% 0 0;
+  animation: rocketFlame 0.2s ease-in-out infinite alternate;
+}
+
+.price-crash {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(45deg, #ff0066, #cc0044);
+  border-radius: 50%;
+  animation: crashFall 2s ease-in;
+  z-index: 100;
+}
+
+.price-crash::after {
+  content: '💥';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 30px;
+  animation: explosion 0.5s ease-out infinite;
+}
+
+/* Interactive 3D Chart Elements */
+.chart-3d {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.chart-bar-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+
+.chart-bar-3d:hover {
+  transform: rotateY(15deg) rotateX(5deg) scale(1.05);
+}
+
+/* Particle Effects */
+.particle-system {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--primary-glow);
+  border-radius: 50%;
+  animation: particleFloat 3s linear infinite;
+}
+
+.particle.green {
+  background: #00ff88;
+  box-shadow: 0 0 10px #00ff88;
+}
+
+.particle.red {
+  background: #ff0066;
+  box-shadow: 0 0 10px #ff0066;
+}
+
+/* Achievement Popup */
+.achievement-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(45deg, #ffd700, #ffed4e);
+  color: #000;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+  transform: translateX(400px);
+  animation: achievementSlide 4s ease-in-out;
+  z-index: 1001;
+}
+
+.achievement-icon {
+  font-size: 30px;
+  margin-right: 15px;
+  animation: achievementBounce 0.6s ease-in-out infinite alternate;
+}
+
+/* Mood Indicator */
+.market-mood {
+  position: fixed;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  animation: moodPulse 2s ease-in-out infinite;
+  cursor: pointer;
+  z-index: 100;
+}
+
+.market-mood.bullish {
+  background: rgba(0, 255, 136, 0.2);
+  border-color: #00ff88;
+}
+
+.market-mood.bearish {
+  background: rgba(255, 0, 102, 0.2);
+  border-color: #ff0066;
+}
+
+.market-mood.neutral {
+  background: rgba(255, 170, 0, 0.2);
+  border-color: #ffaa00;
+}
+
+/* Keyframe Animations */
+@keyframes bullBreathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes bullNod {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(5deg); }
+  75% { transform: rotate(-5deg); }
+}
+
+@keyframes bearSway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-10deg); }
+}
+
+@keyframes bearShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+@keyframes hornGlow {
+  0% { box-shadow: 0 0 5px #ffaa00; }
+  100% { box-shadow: 0 0 20px #ffaa00, 0 0 30px #ffaa00; }
+}
+
+@keyframes eyeBlink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+@keyframes earTwitch {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(10deg); }
+}
+
+@keyframes floatCoin {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes rocketLaunch {
+  0% {
+    transform: translateY(100px) scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-200px) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes rocketFlame {
+  0% { height: 40px; }
+  100% { height: 60px; }
+}
+
+@keyframes crashFall {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(200px) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes explosion {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.2); }
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) translateX(50px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes achievementSlide {
+  0% { transform: translateX(400px); }
+  20% { transform: translateX(0); }
+  80% { transform: translateX(0); }
+  100% { transform: translateX(400px); }
+}
+
+@keyframes achievementBounce {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.2); }
+}
+
+@keyframes moodPulse {
+  0%, 100% { transform: translateY(-50%) scale(1); }
+  50% { transform: translateY(-50%) scale(1.1); }
+}
+
+/* Responsive Animations */
+@media (max-width: 768px) {
+  .bull-character,
+  .bear-character {
+    width: 80px;
+    height: 80px;
+    bottom: 10px;
+  }
+  
+  .market-mood {
+    width: 60px;
+    height: 60px;
+    font-size: 30px;
+  }
+  
+  .floating-coin {
+    width: 30px;
+    height: 30px;
+  }
+}

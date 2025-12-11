@@ -1,0 +1,398 @@
+/* AI Market Predictor Styles */
+
+/* AI Character */
+.ai-character {
+  position: fixed;
+  bottom: 150px;
+  left: 20px;
+  width: 100px;
+  height: 120px;
+  z-index: 1000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ai-character:hover {
+  transform: scale(1.1);
+}
+
+.ai-character.bullish .ai-body {
+  background: linear-gradient(45deg, #00ff88, #00cc66);
+}
+
+.ai-character.bearish .ai-body {
+  background: linear-gradient(45deg, #ff0066, #cc0044);
+}
+
+.ai-character.neutral .ai-body {
+  background: linear-gradient(45deg, #0099ff, #0066cc);
+}
+
+.ai-body {
+  width: 70px;
+  height: 80px;
+  background: linear-gradient(45deg, #0099ff, #0066cc);
+  border-radius: 15px;
+  position: relative;
+  animation: aiFloat 3s ease-in-out infinite;
+  margin: 0 auto;
+}
+
+.ai-head {
+  width: 50px;
+  height: 40px;
+  background: inherit;
+  border-radius: 50% 50% 40% 40%;
+  position: absolute;
+  top: -15px;
+  left: 10px;
+}
+
+.ai-eyes {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.ai-eye {
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-pupil {
+  width: 6px;
+  height: 6px;
+  background: #000;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  transition: all 0.3s ease;
+}
+
+.ai-mouth {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 8px;
+  border-radius: 0 0 16px 16px;
+  background: #333;
+}
+
+.ai-mouth.happy {
+  border-radius: 16px 16px 0 0;
+  background: #ffaa00;
+}
+
+.ai-mouth.sad {
+  border-radius: 0 0 16px 16px;
+  background: #666;
+  transform: translateX(-50%) rotate(180deg);
+}
+
+.ai-brain {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 20px;
+}
+
+.brain-wave {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--primary-glow);
+  border-radius: 50%;
+  animation: brainWave 2s ease-in-out infinite;
+}
+
+.brain-wave:nth-child(1) { left: 5px; animation-delay: 0s; }
+.brain-wave:nth-child(2) { left: 18px; animation-delay: 0.3s; }
+.brain-wave:nth-child(3) { left: 31px; animation-delay: 0.6s; }
+
+.ai-speech-bubble {
+  position: absolute;
+  top: -40px;
+  left: 80px;
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  max-width: 200px;
+  word-wrap: break-word;
+  border: 1px solid var(--primary-glow);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+}
+
+.ai-speech-bubble::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 8px solid transparent;
+  border-right-color: rgba(0, 0, 0, 0.9);
+}
+
+/* AI Predictor Widget */
+.ai-predictor-widget {
+  margin-bottom: 20px;
+}
+
+.predictor-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(15px);
+  border-radius: 15px;
+  padding: 20px;
+  border: 1px solid rgba(0, 153, 255, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 153, 255, 0.2);
+}
+
+.predictor-card h3 {
+  margin: 0 0 15px 0;
+  color: var(--secondary-glow);
+  font-family: 'Orbitron', monospace;
+  text-align: center;
+}
+
+.ai-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #666;
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+.status-indicator.analyzing {
+  background: var(--warning-glow);
+}
+
+.status-indicator.complete {
+  background: var(--primary-glow);
+}
+
+.prediction-display {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.prediction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 153, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.prediction-item:hover {
+  background: rgba(0, 153, 255, 0.1);
+  border-color: var(--secondary-glow);
+}
+
+.prediction-label {
+  font-weight: 600;
+  color: var(--secondary-glow);
+}
+
+.prediction-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.prediction-direction {
+  font-size: 18px;
+}
+
+.prediction-confidence {
+  font-weight: 700;
+  font-family: 'Orbitron', monospace;
+}
+
+.ai-insights {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(0, 153, 255, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 153, 255, 0.3);
+}
+
+.insight-title {
+  font-weight: 600;
+  color: var(--secondary-glow);
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.insight-text {
+  font-size: 13px;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
+.market-fear-gauge {
+  margin-bottom: 20px;
+}
+
+.gauge-title {
+  font-weight: 600;
+  color: var(--secondary-glow);
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.gauge-container {
+  position: relative;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 153, 255, 0.3);
+}
+
+.gauge-fill {
+  height: 100%;
+  background: var(--primary-glow);
+  border-radius: 10px;
+  transition: width 1s ease;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.gauge-needle {
+  position: absolute;
+  top: -5px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 8px solid var(--primary-glow);
+  transition: left 1s ease;
+  transform: translateX(-50%);
+}
+
+.gauge-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.ai-analyze-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(45deg, var(--secondary-glow), #0066cc);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.ai-analyze-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 153, 255, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .ai-character {
+    width: 80px;
+    height: 100px;
+    bottom: 120px;
+  }
+  
+  .ai-body {
+    width: 60px;
+    height: 70px;
+  }
+  
+  .ai-head {
+    width: 40px;
+    height: 35px;
+  }
+  
+  .ai-speech-bubble {
+    left: 70px;
+    max-width: 150px;
+    font-size: 11px;
+  }
+  
+  .prediction-item {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}
+
+/* Animations */
+@keyframes aiFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes brainWave {
+  0%, 100% { 
+    transform: translateY(0) scale(1);
+    opacity: 0.7;
+  }
+  50% { 
+    transform: translateY(-15px) scale(1.2);
+    opacity: 1;
+    box-shadow: 0 0 15px var(--primary-glow);
+  }
+}
+
+@keyframes eyeMovement {
+  0%, 100% { transform: translate(3px, 3px); }
+  25% { transform: translate(1px, 3px); }
+  50% { transform: translate(5px, 3px); }
+  75% { transform: translate(3px, 1px); }
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+@keyframes predictionUpdate {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes speechBubble {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}

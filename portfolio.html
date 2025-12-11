@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Portfolio Tracker | CryptoVerse Live</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="assets/animations.css">
+<link rel="stylesheet" href="assets/gamification.css">
+<link rel="stylesheet" href="assets/ai-predictor.css">
+<link rel="stylesheet" href="assets/crypto-games.css">
+
+<style>
+:root {
+  --primary-glow: #00ff88;
+  --secondary-glow: #0099ff;
+  --danger-glow: #ff0066;
+  --warning-glow: #ffaa00;
+  --bg-dark: #0a0a0f;
+  --bg-card: #1a1a2e;
+  --bg-glass: rgba(26, 26, 46, 0.8);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg-dark);
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 153, 255, 0.1) 0%, transparent 50%);
+  color: #fff;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.header {
+  padding: 30px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 153, 255, 0.1));
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.header h1 {
+  margin: 0;
+  font-family: 'Orbitron', monospace;
+  font-size: 36px;
+  font-weight: 900;
+  background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-menu {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.nav-item {
+  padding: 10px 20px;
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 25px;
+  text-decoration: none;
+  color: var(--primary-glow);
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.nav-item:hover, .nav-item.active {
+  background: var(--primary-glow);
+  color: #000;
+  transform: translateY(-2px);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+.portfolio-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.summary-card {
+  background: var(--bg-glass);
+  border-radius: 15px;
+  padding: 25px;
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  backdrop-filter: blur(15px);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 255, 136, 0.2);
+}
+
+.summary-value {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: 'Orbitron', monospace;
+  margin: 10px 0;
+}
+
+.summary-label {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-bottom: 5px;
+}
+
+.add-coin-section {
+  background: var(--bg-glass);
+  border-radius: 15px;
+  padding: 25px;
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  backdrop-filter: blur(15px);
+  margin-bottom: 30px;
+}
+
+.form-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.form-input {
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 8px;
+  color: #fff;
+  font-family: inherit;
+}
+
+.form-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.btn {
+  background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
+  padding: 12px 25px;
+  border-radius: 25px;
+  border: none;
+  color: #000;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 255, 136, 0.4);
+}
+
+.portfolio-table {
+  background: var(--bg-glass);
+  border-radius: 15px;
+  padding: 25px;
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  backdrop-filter: blur(15px);
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table th {
+  background: rgba(0, 255, 136, 0.1);
+  font-weight: 600;
+  color: var(--primary-glow);
+}
+
+.table tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.coin-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.coin-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.green { color: var(--primary-glow); }
+.red { color: var(--danger-glow); }
+
+.delete-btn {
+  background: var(--danger-glow);
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: #ff3366;
+  transform: scale(1.05);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+  opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .header h1 { font-size: 28px; }
+  .nav-menu { gap: 15px; }
+  .form-group { grid-template-columns: 1fr; }
+  .portfolio-summary { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1><i class="fas fa-chart-pie"></i> Portfolio Tracker</h1>
+  <p style="margin: 10px 0 0; opacity: 0.8;">Track Your Crypto Investments & Performance</p>
+  
+  <div class="nav-menu">
+    <a href="index.html" class="nav-item"><i class="fas fa-home"></i> Home</a>
+    <a href="news.html" class="nav-item"><i class="fas fa-newspaper"></i> News</a>
+    <a href="portfolio.html" class="nav-item active"><i class="fas fa-chart-pie"></i> Portfolio</a>
+  </div>
+</div>
+
+<div class="container">
+  
+  <div class="portfolio-summary">
+    <div class="summary-card">
+      <div class="summary-label">Total Portfolio Value</div>
+      <div class="summary-value" id="totalValue">₹0.00</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">24h Change</div>
+      <div class="summary-value" id="totalChange">₹0.00</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Total Profit/Loss</div>
+      <div class="summary-value" id="totalPnL">₹0.00</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Best Performer</div>
+      <div class="summary-value" id="bestPerformer">-</div>
+    </div>
+  </div>
+
+  <div class="add-coin-section">
+    <h3><i class="fas fa-plus"></i> Add Cryptocurrency to Portfolio</h3>
+    <div class="form-group">
+      <input type="text" id="coinSymbol" class="form-input" placeholder="Coin Symbol (e.g., BTC, ETH)" />
+      <input type="number" id="coinAmount" class="form-input" placeholder="Amount Owned" step="0.00000001" />
+      <input type="number" id="buyPrice" class="form-input" placeholder="Average Buy Price (₹)" step="0.01" />
+      <button onclick="addCoin()" class="btn">
+        <i class="fas fa-plus"></i> Add to Portfolio
+      </button>
+    </div>
+  </div>
+
+  <div class="portfolio-table">
+    <h3><i class="fas fa-list"></i> Your Holdings</h3>
+    <div id="portfolioContent">
+      <div class="empty-state">
+        <i class="fas fa-chart-pie" style="font-size: 48px; opacity: 0.3; margin-bottom: 20px;"></i>
+        <p>Your portfolio is empty. Add some cryptocurrencies to get started!</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+class PortfolioTracker {
+  constructor() {
+    this.portfolio = JSON.parse(localStorage.getItem('cryptoPortfolio')) || [];
+    this.coinPrices = {};
+    this.init();
+  }
+
+  async init() {
+    await this.loadCoinPrices();
+    this.renderPortfolio();
+    this.updateSummary();
+    
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+      this.loadCoinPrices();
+      this.renderPortfolio();
+      this.updateSummary();
+    }, 30000);
+  }
+
+  async loadCoinPrices() {
+    if (this.portfolio.length === 0) return;
+    
+    const symbols = this.portfolio.map(coin => coin.symbol.toLowerCase()).join(',');
+    try {
+      const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${symbols}&vs_currencies=inr&include_24hr_change=true`);
+      const data = await response.json();
+      
+      // Also get coin info for logos and names
+      const coinListResponse = await fetch('https://api.coingecko.com/api/v3/coins/list');
+      const coinList = await coinListResponse.json();
+      
+      this.coinPrices = data;
+      this.coinList = coinList;
+    } catch (error) {
+      console.error('Error loading coin prices:', error);
+    }
+  }
+
+  addCoin(symbol, amount, buyPrice) {
+    const existingCoin = this.portfolio.find(coin => coin.symbol.toLowerCase() === symbol.toLowerCase());
+    
+    if (existingCoin) {
+      // Update existing coin (average the buy price)
+      const totalValue = (existingCoin.amount * existingCoin.buyPrice) + (amount * buyPrice);
+      const totalAmount = existingCoin.amount + amount;
+      existingCoin.amount = totalAmount;
+      existingCoin.buyPrice = totalValue / totalAmount;
+    } else {
+      // Add new coin
+      this.portfolio.push({
+        symbol: symbol.toLowerCase(),
+        amount: amount,
+        buyPrice: buyPrice,
+        addedDate: new Date().toISOString()
+      });
+    }
+    
+    this.savePortfolio();
+    this.loadCoinPrices().then(() => {
+      this.renderPortfolio();
+      this.updateSummary();
+    });
+  }
+
+  removeCoin(symbol) {
+    this.portfolio = this.portfolio.filter(coin => coin.symbol !== symbol);
+    this.savePortfolio();
+    this.renderPortfolio();
+    this.updateSummary();
+  }
+
+  savePortfolio() {
+    localStorage.setItem('cryptoPortfolio', JSON.stringify(this.portfolio));
+  }
+
+  getCoinInfo(symbol) {
+    if (!this.coinList) return { name: symbol.toUpperCase(), image: '' };
+    const coin = this.coinList.find(c => c.symbol.toLowerCase() === symbol.toLowerCase());
+    return coin || { name: symbol.toUpperCase(), image: '' };
+  }
+
+  renderPortfolio() {
+    const container = document.getElementById('portfolioContent');
+    
+    if (this.portfolio.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-chart-pie" style="font-size: 48px; opacity: 0.3; margin-bottom: 20px;"></i>
+          <p>Your portfolio is empty. Add some cryptocurrencies to get started!</p>
+        </div>
+      `;
+      return;
+    }
+
+    const tableHTML = `
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Coin</th>
+            <th>Holdings</th>
+            <th>Current Price</th>
+            <th>Market Value</th>
+            <th>Avg Buy Price</th>
+            <th>P&L</th>
+            <th>24h Change</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${this.portfolio.map(coin => this.renderCoinRow(coin)).join('')}
+        </tbody>
+      </table>
+    `;
+    
+    container.innerHTML = tableHTML;
+  }
+
+  renderCoinRow(coin) {
+    const coinInfo = this.getCoinInfo(coin.symbol);
+    const priceData = this.coinPrices[coin.symbol] || {};
+    const currentPrice = priceData.inr || 0;
+    const change24h = priceData.inr_24h_change || 0;
+    
+    const marketValue = coin.amount * currentPrice;
+    const totalCost = coin.amount * coin.buyPrice;
+    const pnl = marketValue - totalCost;
+    const pnlPercentage = totalCost > 0 ? (pnl / totalCost) * 100 : 0;
+    
+    const pnlClass = pnl >= 0 ? 'green' : 'red';
+    const changeClass = change24h >= 0 ? 'green' : 'red';
+    
+    return `
+      <tr>
+        <td>
+          <div class="coin-info">
+            <img src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" class="coin-logo" alt="${coin.symbol}">
+            <div>
+              <div style="font-weight: 600;">${coinInfo.name}</div>
+              <div style="font-size: 12px; opacity: 0.6;">${coin.symbol.toUpperCase()}</div>
+            </div>
+          </div>
+        </td>
+        <td>${coin.amount.toFixed(8)}</td>
+        <td>₹${currentPrice.toLocaleString()}</td>
+        <td>₹${marketValue.toLocaleString()}</td>
+        <td>₹${coin.buyPrice.toLocaleString()}</td>
+        <td class="${pnlClass}">
+          ₹${pnl.toLocaleString()}<br>
+          <small>(${pnlPercentage.toFixed(2)}%)</small>
+        </td>
+        <td class="${changeClass}">
+          ${change24h >= 0 ? '+' : ''}${change24h.toFixed(2)}%
+        </td>
+        <td>
+          <button class="delete-btn" onclick="portfolio.removeCoin('${coin.symbol}')">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+  }
+
+  updateSummary() {
+    let totalValue = 0;
+    let totalChange = 0;
+    let totalPnL = 0;
+    let bestPerformer = { symbol: '-', change: -Infinity };
+
+    this.portfolio.forEach(coin => {
+      const priceData = this.coinPrices[coin.symbol] || {};
+      const currentPrice = priceData.inr || 0;
+      const change24h = priceData.inr_24h_change || 0;
+      
+      const marketValue = coin.amount * currentPrice;
+      const totalCost = coin.amount * coin.buyPrice;
+      const pnl = marketValue - totalCost;
+      
+      totalValue += marketValue;
+      totalChange += marketValue * (change24h / 100);
+      totalPnL += pnl;
+      
+      if (change24h > bestPerformer.change) {
+        bestPerformer = { symbol: coin.symbol.toUpperCase(), change: change24h };
+      }
+    });
+
+    document.getElementById('totalValue').textContent = `₹${totalValue.toLocaleString()}`;
+    document.getElementById('totalChange').textContent = `₹${totalChange.toLocaleString()}`;
+    document.getElementById('totalChange').className = `summary-value ${totalChange >= 0 ? 'green' : 'red'}`;
+    document.getElementById('totalPnL').textContent = `₹${totalPnL.toLocaleString()}`;
+    document.getElementById('totalPnL').className = `summary-value ${totalPnL >= 0 ? 'green' : 'red'}`;
+    document.getElementById('bestPerformer').textContent = bestPerformer.symbol !== '-' ? 
+      `${bestPerformer.symbol} (+${bestPerformer.change.toFixed(2)}%)` : '-';
+  }
+}
+
+// Initialize portfolio tracker
+const portfolio = new PortfolioTracker();
+
+// Add coin function for the form
+function addCoin() {
+  const symbol = document.getElementById('coinSymbol').value.trim();
+  const amount = parseFloat(document.getElementById('coinAmount').value);
+  const buyPrice = parseFloat(document.getElementById('buyPrice').value);
+  
+  if (!symbol || !amount || !buyPrice) {
+    alert('Please fill in all fields');
+    return;
+  }
+  
+  portfolio.addCoin(symbol, amount, buyPrice);
+  
+  // Clear form
+  document.getElementById('coinSymbol').value = '';
+  document.getElementById('coinAmount').value = '';
+  document.getElementById('buyPrice').value = '';
+}
+
+// Add enter key support for form
+document.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter' && e.target.classList.contains('form-input')) {
+    addCoin();
+  }
+});
+
+// Load 3D effects and gamification
+const script1 = document.createElement('script');
+script1.src = 'assets/3d-effects.js';
+document.head.appendChild(script1);
+
+const script2 = document.createElement('script');
+script2.src = 'assets/gamification.js';
+document.head.appendChild(script2);
+
+const script3 = document.createElement('script');
+script3.src = 'assets/ai-predictor.js';
+document.head.appendChild(script3);
+
+const script4 = document.createElement('script');
+script4.src = 'assets/crypto-games.js';
+document.head.appendChild(script4);
+
+const script5 = document.createElement('script');
+script5.src = 'assets/professional-animations.js';
+document.head.appendChild(script5);
+
+// Track portfolio actions for gamification
+const originalAddCoin = portfolio.addCoin;
+portfolio.addCoin = function(...args) {
+  const result = originalAddCoin.apply(this, args);
+  if (window.gameSystem) {
+    gameSystem.trackEvent('portfolio_add');
+  }
+  return result;
+};
+</script>
+
+</body>
+</html>
